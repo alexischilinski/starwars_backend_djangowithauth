@@ -73,15 +73,27 @@ class UserWildlifeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 class UserCharacterViewSet(viewsets.ModelViewSet):
-    queryset = UserCharacter.objects.all()
+    # queryset = UserCharacter.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = UserCharacterSerializer
 
+    def get_queryset(self):
+        return self.request.user.usercharacters.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 class UserPlanetViewSet(viewsets.ModelViewSet):
-    queryset = UserPlanet.objects.all()
+    # queryset = UserPlanet.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = UserPlanetSerializer
+    
+    def get_queryset(self):
+        return self.request.user.userplanets.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

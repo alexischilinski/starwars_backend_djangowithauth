@@ -86,7 +86,7 @@ class UserPlanet(models.Model):
 
 class UserWildlife(models.Model):
     user=models.ForeignKey(User, related_name="userwildlife", on_delete=models.CASCADE, null=True)
-    category=models.CharField(max_length=200, default='wildlife')
+    category=models.CharField(max_length=200, default='animal')
     name=models.CharField(max_length=200)
     classification=models.CharField(max_length=200, null=True, blank=True)
     habitat=models.CharField(max_length=200, null=True, blank=True)
