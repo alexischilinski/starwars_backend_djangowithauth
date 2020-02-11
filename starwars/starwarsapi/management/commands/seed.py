@@ -1,51 +1,58 @@
 import os 
 import requests
 from django.core.management.base import BaseCommand
-from ...models import Planet, Species, Character, Vehicle, Starship, Movie, CharacterMovie
+from ...models import Planet, Species, Character, Vehicle, Starship, Movie, CharacterMovie, Wildlife
 
 
 def get_planets():
-    url = 'http://localhost:3000/planets'
+    url = 'http://localhost:8000/api/planets/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     planets = r.json()
     return planets
 
 def get_species():
-    url = 'http://localhost:3000/species'
+    url = 'http://localhost:8000/api/species/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     species = r.json()
     return species
 
 def get_characters():
-    url = 'http://localhost:3000/characters'
+    url = 'http://localhost:8000/api/characters/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     characters = r.json()
     return characters
 
 def get_vehicles():
-    url = 'http://localhost:3000/vehicles'
+    url = 'http://localhost:8000/api/vehicles/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     vehicles = r.json()
     return vehicles
 
 def get_starships():
-    url = 'http://localhost:3000/starships'
+    url = 'http://localhost:8000/api/starships/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     starships = r.json()
     return starships
 
 def get_movies():
-    url = 'http://localhost:3000/movies'
+    url = 'http://localhost:8000/api/movies/?format=json'
     r = requests.get(url, headers={'Content-Type': 'application/json'})
     movies = r.json()
     return movies
+
+def get_animals():
+    url = 'http://localhost:8000/api/wildlife/?format=json'
+    r = requests.get(url, headers={'Content-Type': 'application/json'})
+    animals = r.json()
+    return animals
 
 def seed_planets():
     for i in get_planets():
         planets = Planet(
             name=i["name"],
             climate=i["climate"],
-            terrain=i["terrain"]
+            terrain=i["terrain"],
+            image=i["image"]
         )
         planets.save()
 
@@ -66,8 +73,12 @@ def seed_characters():
             planet=i["planet"],
             species=i["species"],
             image=i["image"],
-            force_sensitive="",
-            side=""
+            force_sensitive=i["force_sensitive"],
+            side=i["side"],
+            role=i["role"],
+            lightsaber=i["lightsaber"],
+            quote=i["quote"],
+            sith_name=i["sith_name"]
         )
         characters.save()
 
@@ -99,6 +110,7 @@ def seed_movies():
             title=i["title"],
             episode=i["episode"],
             opening_crawl=i["opening_crawl"],
+            poster=i["poster"]
         )
         movies.save()
 
@@ -116,6 +128,17 @@ def seed_charactersmovies():
                             )
                             moviecharacter.save()
 
+def seed_animals():
+    for i in get_animals():
+        animal = Wildlife(
+            name=i["name"],
+            classification=i["classification"],
+            habitat=i["habitat"],
+            diet=i["diet"],
+            image=i["image"]
+        )
+        animal.save()
+
 def clear_data():
     """Deletes all the table data"""
     # Planet.objects.all().delete()
@@ -125,6 +148,7 @@ def clear_data():
     # Character.objects.all().delete()
     # Vehicle.objects.all().delete()
     # Starship.objects.all().delete()
+    # Wildlife.objects.all().delete()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -132,8 +156,9 @@ class Command(BaseCommand):
         # seed_planets()
         # seed_species()
         # seed_movies()
-        seed_characters()
+        # seed_characters()
         # seed_vehicles()
         # seed_starships()
-        seed_charactersmovies()
+        # seed_charactersmovies()
+        # seed_animals()
         print("completed")
